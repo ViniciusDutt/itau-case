@@ -1,0 +1,70 @@
+<div class="w-full relative overflow-x-auto border border-border">
+  <table class="text-left text-black table-auto min-w-full">
+    <thead class="text-xs text-white uppercase bg-secondary">
+      <tr>
+        @for (col of columns(); track col.key) {
+          <th
+            scope="col"
+            class="px-6 text-xs py-4 font-bold"
+            [class.cursor-pointer]="col.sortable && data().length > 0"
+            [class.opacity-50]="col.sortable && data().length === 0"
+            (click)="col.sortable && data().length > 0 && onSort()?.(col)"
+          >
+            <div class="flex items-center gap-2">
+              <span>{{ col.label }}</span>
+              <app-icon
+                *ngIf="col.sortable"
+                name="sort"
+                class="w-4 h-4"
+              ></app-icon>
+            </div>
+          </th>
+        }
+      </tr>
+    </thead>
+
+    <tbody class="divide-y divide-gray-200">
+      @for (row of data(); track $index) {
+        <tr class="bg-white hover:bg-gray-50 transition-colors">
+          @for (col of columns(); track col.key) {
+            <td class="px-6 py-4 text-sm" [ngClass]="col.getCellClass?.(row)">
+              @if (col.cellTemplate) {
+                <ng-container
+                  *ngTemplateOutlet="
+                    col.cellTemplate;
+                    context: { $implicit: row }
+                  "
+                ></ng-container>
+              } @else {
+                {{ row[col.key] }}
+              }
+            </td>
+          }
+        </tr>
+      } @empty {
+        <tr>
+          <td [attr.colspan]="columns().length" class="px-6 py-10">
+            <div class="text-center">
+              <p class="text-secondary font-medium">
+                Nenhum registro encontrado
+              </p>
+              <p class="text-gray-400 text-sm mt-1">
+                Tente ajustar seus filtros
+              </p>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (isLoading()) {
+    <div
+      class="absolute inset-0 bg-white/50 flex items-center justify-center backdrop-blur-[1px]"
+    >
+      <div
+        class="animate-spin rounded-full h-8 w-8 border-b-2 border-[#ec7000]"
+      ></div>
+    </div>
+  }
+</div>

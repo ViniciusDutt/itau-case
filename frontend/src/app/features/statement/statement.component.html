@@ -1,0 +1,119 @@
+<ng-template #actionsTemplate let-row>
+  <app-dropdown-menu
+    [options]="[
+      { id: 'edit', label: 'Editar', icon: 'edit' },
+      { id: 'update-patrimony', label: 'Atualizar Patrimônio', icon: 'money' },
+      { id: 'remove', label: 'Remover', icon: 'delete' },
+    ]"
+    [triggerLabel]="'more'"
+    (optionSelected)="onActionSelected($event, row)"
+  >
+  </app-dropdown-menu>
+</ng-template>
+
+<section class="space-y-6 p-6 max-w-7xl mx-auto">
+  <div class="flex items-center gap-6">
+    <h1 class="text-2xl font-bold text-secondary lg:text-nowrap">
+      Carteira de Ativos
+    </h1>
+    <hr class="border-primary w-full" />
+  </div>
+
+  <app-statement-filters
+    [isLoading]="statementService.loading()"
+    [hasData]="statementService.transactions().length > 0"
+    (search)="onSearch($event)"
+    (clear)="onClear()"
+    (newTransaction)="dialogService.open()"
+  ></app-statement-filters>
+
+  @if (statementService.error()) {
+    <div
+      class="bg-red-50 p-6 rounded-xl border border-red-200 flex items-center gap-4"
+    >
+      <div>
+        <h3 class="text-red-800 font-bold">{{ statementService.error() }}</h3>
+      </div>
+    </div>
+  } @else if (statementService.loading()) {
+    <div class="space-y-4">
+      @for (item of [1, 2, 3, 4, 5]; track item) {
+        <div
+          class="bg-white p-6 rounded-lg border border-gray-100 animate-pulse"
+        >
+          <div class="grid grid-cols-4 gap-4">
+            <div class="h-4 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+      }
+    </div>
+  } @else {
+    <div class="space-y-6">
+      <app-table
+        [columns]="columns()"
+        [data]="statementService.transactions()"
+        [isLoading]="false"
+        [onSort]="onColumnSort.bind(this)"
+      >
+      </app-table>
+
+      @if (totalPages > 0) {
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages"
+          [totalItems]="statementService.totalItems()"
+          [itemsPerPage]="itemsPerPage()"
+          (pageChange)="onPageChange($event)"
+        ></app-pagination>
+      }
+    </div>
+  }
+</section>
+
+<app-dialog
+  [isOpen]="
+    dialogService.isOpen() &&
+    !transactionToUpdatePatrimony() &&
+    !transactionToRemove()
+  "
+  [title]="
+    transactionToEdit() ? 'Editar Transação' : 'Adicionar Nova Transação'
+  "
+  [showFooter]="false"
+  (close)="onTransactionDialogCancelled()"
+>
+  <app-new-transaction-dialog
+    [transactionEdit]="transactionToEdit()"
+    (transactionCreated)="onNewTransactionCreated($event)"
+    (cancelled)="onTransactionDialogCancelled()"
+  ></app-new-transaction-dialog>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="dialogService.isOpen() && !!transactionToUpdatePatrimony()"
+  title="Atualizar Patrimônio"
+  [showFooter]="false"
+  (close)="onPatrimonyDialogCancelled()"
+>
+  <app-update-patrimony-dialog
+    [patrimonioValue]="transactionToUpdatePatrimony()?.patrimonio || ''"
+    (patrimonioUpdated)="onPatrimonyUpdated($event)"
+    (cancelled)="onPatrimonyDialogCancelled()"
+  ></app-update-patrimony-dialog>
+</app-dialog>
+
+<app-dialog
+  [isOpen]="dialogService.isOpen() && !!transactionToRemove()"
+  title="Remover Transação"
+  [showFooter]="false"
+  (close)="onRemovalDialogCancelled()"
+>
+  <app-remove-confirmation-dialog
+    [transaction]="transactionToRemove()"
+    (confirmed)="onRemovalConfirmed()"
+    (cancelled)="onRemovalDialogCancelled()"
+  ></app-remove-confirmation-dialog>
+</app-dialog>

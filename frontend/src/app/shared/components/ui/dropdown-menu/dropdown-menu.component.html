@@ -1,0 +1,33 @@
+<button
+  #triggerButton
+  class="flex items-center justify-center cursor-pointer w-10 h-10 rounded-md hover:bg-gray-100 hover:border-gray-400 transition-all duration-200 ease-in-out"
+  [class.bg-blue-50]="isOpen"
+  [class.border-gray-900]="isOpen"
+  (click)="toggleDropdown()"
+  [attr.aria-expanded]="isOpen"
+  type="button"
+>
+  <app-icon [name]="triggerLabel()" class="w-6 h-6"></app-icon>
+</button>
+
+<div
+  #dropdownMenu
+  *ngIf="isOpen"
+  class="fixed w-max bg-white border border-gray-200 rounded-lg shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200"
+  [style.top]="dropdownPosition.top"
+  [style.left]="dropdownPosition.left"
+>
+  <button
+    *ngFor="let option of options()"
+    class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm text-gray-900 hover:bg-gray-100 active:bg-gray-200 transition-colors duration-150 whitespace-nowrap"
+    (click)="selectOption(option)"
+    type="button"
+  >
+    <app-icon
+      *ngIf="option.icon"
+      [name]="option.icon"
+      class="w-5 h-5 shrink-0"
+    ></app-icon>
+    <span>{{ option.label }}</span>
+  </button>
+</div>

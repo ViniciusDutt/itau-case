@@ -1,0 +1,58 @@
+<div class="flex items-center justify-center gap-2 py-6">
+  <app-button
+    type="button"
+    variant="outline"
+    [disabled]="currentPage() <= 1"
+    (click)="goToFirst()"
+    title="Primeira página"
+  >
+    <app-icon name="double-arrow-left" class="w-6 h-6" />
+  </app-button>
+
+  <app-button
+    type="button"
+    variant="outline"
+    [disabled]="currentPage() <= 1"
+    (click)="goToPrevious()"
+    title="Página anterior"
+  >
+    <app-icon name="arrow-left" class="w-6 h-6" />
+  </app-button>
+
+  @for (page of pageNumbers(); track page) {
+    <app-button
+      type="button"
+      [variant]="page === currentPage() ? 'default' : 'ghost'"
+      (click)="goToPage(page)"
+    >
+      {{ page }}
+    </app-button>
+  }
+
+  <app-button
+    type="button"
+    variant="outline"
+    [disabled]="currentPage() >= totalPages()"
+    (click)="goToNext()"
+    title="Próxima página"
+  >
+    <app-icon name="arrow-right" class="w-6 h-6" />
+  </app-button>
+
+  <app-button
+    type="button"
+    variant="outline"
+    [disabled]="currentPage() >= totalPages()"
+    (click)="goToLast()"
+    title="Última página"
+  >
+    <app-icon name="double-arrow-right" class="w-6 h-6" />
+  </app-button>
+
+  <span class="text-sm text-gray-600 ml-4">
+    Página {{ currentPage() }} de {{ totalPages() }}
+    @if (totalItems() > 0) {
+      <span class="ml-2">({{ totalItems() }} registros)</span>
+    }
+  </span>
+</div>

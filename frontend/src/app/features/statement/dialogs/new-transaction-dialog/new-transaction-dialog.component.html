@@ -1,0 +1,92 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col gap-4">
+  @if (isEditMode()) {
+    <div class="flex flex-col gap-2 w-full">
+      <label class="text-sm font-semibold text-gray-700"
+        >Código de Negociação</label
+      >
+      <p
+        class="px-3 py-2.5 text-sm font-inherit text-gray-900 bg-gray-100 rounded-md"
+      >
+        {{ form.get("codigo")?.value }}
+      </p>
+    </div>
+  } @else {
+    <app-input
+      formControlName="codigo"
+      type="text"
+      label="Código de Negociação"
+      placeholder="Ex: ITUB4"
+      [maxLength]="20"
+      [showError]="isFieldInvalid('codigo')"
+      [errorMessage]="getFieldError('codigo')"
+      [required]="true"
+    ></app-input>
+  }
+
+  <app-input
+    formControlName="nome"
+    type="text"
+    label="Nome da Empresa"
+    placeholder="Ex: Itaú Unibanco"
+    [showError]="isFieldInvalid('nome')"
+    [errorMessage]="getFieldError('nome')"
+    [required]="true"
+  ></app-input>
+
+  <app-input
+    formControlName="cnpj"
+    type="text"
+    [inputmode]="'numeric'"
+    label="CNPJ"
+    placeholder="Ex: 12.345.678/0001-00"
+    [maxLength]="18"
+    [showError]="isFieldInvalid('cnpj')"
+    [errorMessage]="getFieldError('cnpj')"
+    [required]="true"
+  ></app-input>
+
+  <app-select
+    formControlName="codigoTipo"
+    label="Tipo de Fundo"
+    placeholder="Selecione um tipo"
+    [options]="fundTypeOptions()"
+    [showError]="isFieldInvalid('codigoTipo')"
+    [errorMessage]="getFieldError('codigoTipo')"
+    [required]="true"
+  ></app-select>
+
+  <app-input
+    formControlName="patrimonio"
+    type="text"
+    [inputmode]="'numeric'"
+    label="Patrimônio Líquido (R$)"
+    placeholder="Ex: R$ 100.000,00"
+    [maxLength]="30"
+    [showError]="isFieldInvalid('patrimonio')"
+    [errorMessage]="getFieldError('patrimonio')"
+    [required]="true"
+  ></app-input>
+
+  <div class="flex gap-3 mt-6 pt-6 border-t border-gray-200">
+    <button
+      type="button"
+      (click)="onCancel()"
+      class="flex-1 px-4 py-2.5 bg-gray-200 text-gray-700 rounded-md font-semibold text-sm cursor-pointer transition-all hover:bg-gray-300"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      [disabled]="form.invalid || isSubmitting()"
+      class="flex-1 px-4 py-2.5 bg-orange-600 text-white rounded-md font-semibold text-sm cursor-pointer transition-all hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed disabled:opacity-60"
+    >
+      @if (isSubmitting()) {
+        Salvando...
+      } @else if (isEditMode()) {
+        Confirmar Edição
+      } @else {
+        Adicionar Transação
+      }
+    </button>
+  </div>
+</form>

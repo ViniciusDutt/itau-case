@@ -1,0 +1,40 @@
+<div
+  title=""
+  class="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 opacity-0 invisible transition-all duration-300"
+  [class.opacity-100]="isOpen()"
+  [class.visible]="isOpen()"
+  (click)="onBackdropClick($event)"
+>
+  <div
+    class="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto flex flex-col animate-in slide-in-from-top-2 duration-300"
+    [class]="isOpen() ? '' : 'hidden'"
+  >
+    <div
+      class="flex items-center justify-between p-6 border-b border-gray-100 shrink-0"
+    >
+      <h2 class="text-xl font-bold text-gray-900">{{ title() }}</h2>
+      <button
+        type="button"
+        class="text-gray-400 hover:text-gray-600 transition-colors p-0 flex items-center justify-center"
+        (click)="onClose()"
+        aria-label="Fechar dialog"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="p-6 flex-1 overflow-y-auto">
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
