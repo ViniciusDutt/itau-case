@@ -3,21 +3,22 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NewTransactionDialogComponent } from './new-transaction-dialog.component';
 import { FundTypeService } from '../../../../domains/statement/services/fund-type.service';
-import { CurrencyFormatterService } from '../../../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../../../shared/services/formatter.service';
 import { signal } from '@angular/core';
 
 describe('NewTransactionDialogComponent', () => {
   let component: NewTransactionDialogComponent;
   let fixture: ComponentFixture<NewTransactionDialogComponent>;
-  let mockCurrencyFormatter: any;
+  let mockFormatter: any;
 
   const mockFundTypes = [{ codigo: 'FI001', nome: 'Fundo' }];
 
   beforeEach(async () => {
-    mockCurrencyFormatter = {
+    mockFormatter = {
       formatCnpj: jest.fn(),
       parseCurrency: jest.fn().mockReturnValue(5000),
-      formatCurrency: jest.fn().mockReturnValue('R$ 5.000,00')
+      formatCurrency: jest.fn().mockReturnValue('R$ 5.000,00'),
+      formatPatrimony: jest.fn().mockReturnValue('R$ 5.000,00')
     };
 
     const mockFundTypeService = { fundTypes: signal(mockFundTypes) };
@@ -26,7 +27,7 @@ describe('NewTransactionDialogComponent', () => {
       imports: [NewTransactionDialogComponent, ReactiveFormsModule],
       providers: [
         { provide: FundTypeService, useValue: mockFundTypeService },
-        { provide: CurrencyFormatterService, useValue: mockCurrencyFormatter }
+        { provide: FormatterService, useValue: mockFormatter }
       ]
     }).compileComponents();
 

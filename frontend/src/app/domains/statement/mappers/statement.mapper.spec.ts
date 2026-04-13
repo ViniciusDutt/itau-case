@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach } from '@jest/globals';
 import { StatementMapper } from './statement.mapper';
-import { CurrencyFormatterService } from '../../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../../shared/services/formatter.service';
 import { TransactionDTO } from '../dtos/statement.dto';
 
 describe('StatementMapper', () => {
   let mapper: StatementMapper;
-  let currencyFormatterService: CurrencyFormatterService;
+  let formatterService: FormatterService;
 
   beforeEach(() => {
-    currencyFormatterService = new CurrencyFormatterService();
-    mapper = new StatementMapper(currencyFormatterService);
+    formatterService = new FormatterService();
+    mapper = new StatementMapper(formatterService);
   });
 
   describe('toDomain', () => {
@@ -34,7 +34,7 @@ describe('StatementMapper', () => {
     });
 
     it('deve formatar patrimonio como moeda', () => {
-      jest.spyOn(currencyFormatterService, 'formatCurrency').mockReturnValue('R$ 50.000,00');
+      jest.spyOn(formatterService, 'formatCurrency').mockReturnValue('R$ 50.000,00');
 
       const dto: TransactionDTO = {
         codigo: 'ABC123',
@@ -49,11 +49,11 @@ describe('StatementMapper', () => {
       const result = mapper.toDomain(dto);
 
       expect(result.patrimonio).toBe('R$ 50.000,00');
-      expect(currencyFormatterService.formatCurrency).toHaveBeenCalledWith(50000);
+      expect(formatterService.formatCurrency).toHaveBeenCalledWith(50000);
     });
 
     it('deve formatar CNPJ corretamente', () => {
-      jest.spyOn(currencyFormatterService, 'formatCnpj').mockReturnValue('12.345.678/0001-90');
+      jest.spyOn(formatterService, 'formatCnpj').mockReturnValue('12.345.678/0001-90');
 
       const dto: TransactionDTO = {
         codigo: 'ABC123',
@@ -68,7 +68,7 @@ describe('StatementMapper', () => {
       const result = mapper.toDomain(dto);
 
       expect(result.cnpj).toBe('12.345.678/0001-90');
-      expect(currencyFormatterService.formatCnpj).toHaveBeenCalledWith('12345678000190');
+      expect(formatterService.formatCnpj).toHaveBeenCalledWith('12345678000190');
     });
 
     it('deve retornar tema como "N/A" quando type.nome não existe', () => {

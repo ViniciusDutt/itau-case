@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class CurrencyFormatterService {
+export class FormatterService {
 
   formatCurrency(value: number): string {
     if (!Number.isFinite(value)) {
@@ -18,6 +18,22 @@ export class CurrencyFormatterService {
       style: 'currency',
       currency: 'BRL'
     }).format(value);
+  }
+
+  formatPatrimony(value: string | number): string {
+    const onlyNumbers = String(value).replace(/\D/g, '').substring(0, 20);
+
+    if (!onlyNumbers) {
+      return '';
+    }
+
+    const numValue = parseInt(onlyNumbers, 10);
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(numValue / 100);
   }
 
   parseCurrency(value: string | number | null | undefined): number {

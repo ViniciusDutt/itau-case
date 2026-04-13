@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { StatementService } from './statement.service';
 import { StatementMapper } from './mappers/statement.mapper';
-import { CurrencyFormatterService } from '../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../shared/services/formatter.service';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -21,7 +21,7 @@ describe('StatementService', () => {
         provideHttpClientTesting(),
         StatementService,
         StatementMapper,
-        CurrencyFormatterService
+        FormatterService
       ]
     }).compileComponents();
 

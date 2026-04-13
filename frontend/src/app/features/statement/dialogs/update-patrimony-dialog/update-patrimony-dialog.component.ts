@@ -2,9 +2,8 @@ import { Component, inject, input, output, signal, effect, DestroyRef } from '@a
 import { CommonModule } from '@angular/common';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { CurrencyFormatterService } from '../../../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../../../shared/services/formatter.service';
 import { InputComponent } from '../../../../shared/components/ui/input/input.component';
-import { formatPatrimonyValue, hasPatrimonyValueChanged } from '../../../../shared/utils/patrimony.utils';
 
 @Component({
   selector: 'app-update-patrimony-dialog',
@@ -15,7 +14,7 @@ import { formatPatrimonyValue, hasPatrimonyValueChanged } from '../../../../shar
 })
 export class UpdatePatrimonyDialogComponent {
   private fb = inject(NonNullableFormBuilder);
-  private currencyFormatter = inject(CurrencyFormatterService);
+  private formatter = inject(FormatterService);
   private destroyRef = inject(DestroyRef);
 
   patrimonioValue = input<string>('');
@@ -53,7 +52,7 @@ export class UpdatePatrimonyDialogComponent {
 
       try {
         const patrimonio = this.form.getRawValue().patrimonio || '';
-        const patrimonioValue = this.currencyFormatter.parseCurrency(patrimonio);
+        const patrimonioValue = this.formatter.parseCurrency(patrimonio);
 
         this.patrimonioUpdated.emit(patrimonioValue);
         this.resetForm();
@@ -73,7 +72,7 @@ export class UpdatePatrimonyDialogComponent {
   }
 
   private updatePatrimonioField(value: string | number): void {
-    const formatted = formatPatrimonyValue(value);
+    const formatted = this.formatter.formatPatrimony(value);
 
     if (!formatted) {
       this.form.get('patrimonio')?.setValue('', { emitEvent: false });
@@ -81,7 +80,7 @@ export class UpdatePatrimonyDialogComponent {
     }
 
     // Only update if different to avoid cursor issues
-    if (hasPatrimonyValueChanged(formatted, value)) {
+    if (formatted !== value) {
       this.form.get('patrimonio')?.setValue(formatted, { emitEvent: false });
     }
   }

@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators, AbstractControl } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FundTypeService } from '../../../../domains/statement/services/fund-type.service';
-import { CurrencyFormatterService } from '../../../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../../../shared/services/formatter.service';
 import { Transaction } from '../../../../domains/statement/models/transaction.model';
 import { SelectComponent, type SelectOption } from '../../../../shared/components/ui/select/select.component';
 import { InputComponent } from '../../../../shared/components/ui/input/input.component';
-import { formatPatrimonyValue, hasPatrimonyValueChanged } from '../../../../shared/utils/patrimony.utils';
 
 @Component({
   selector: 'app-new-transaction-dialog',
@@ -19,7 +18,7 @@ import { formatPatrimonyValue, hasPatrimonyValueChanged } from '../../../../shar
 export class NewTransactionDialogComponent {
   private fb = inject(NonNullableFormBuilder);
   protected fundTypeService = inject(FundTypeService);
-  private currencyFormatter = inject(CurrencyFormatterService);
+  private formatter = inject(FormatterService);
   private destroyRef = inject(DestroyRef);
 
   transactionEdit = input<Partial<Transaction> | null>(null);
@@ -53,7 +52,7 @@ export class NewTransactionDialogComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         if (value) {
-          const formatted = this.currencyFormatter.formatCnpj(value);
+          const formatted = this.formatter.formatCnpj(value);
           if (formatted !== value) {
             this.form.get('cnpj')?.setValue(formatted, { emitEvent: false });
           }
@@ -96,19 +95,12 @@ export class NewTransactionDialogComponent {
     return null;
   };
 
-  private validateCodigoTipo = (control: AbstractControl): { [key: string]: any } | null => {
-    if (!control.value || control.value === '' || control.value === 0) {
-      return { invalidCodigoTipo: true };
-    }
-    return null;
-  };
-
   private validatePatrimonio = (control: AbstractControl): { [key: string]: any } | null => {
     if (!control.value) {
       return null;
     }
 
-    const parsed = this.currencyFormatter.parseCurrency(control.value);
+    const parsed = this.formatter.parseCurrency(control.value);
     if (parsed <= 0) {
       return { invalidCurrency: { value: control.value } };
     }
@@ -120,7 +112,7 @@ export class NewTransactionDialogComponent {
     codigo: ['', [Validators.required, Validators.minLength(1), Validators.maxLength(20)]],
     nome: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     cnpj: ['', [Validators.required, this.validateCnpj]],
-    codigoTipo: ['', [Validators.required, this.validateCodigoTipo]],
+    codigoTipo: ['', [Validators.required]],
     patrimonio: ['', [Validators.required, this.validatePatrimonio]]
   });
 
@@ -130,7 +122,7 @@ export class NewTransactionDialogComponent {
 
       const formValue = this.form.getRawValue();
       const cnpjOnlyNumbers = String(formValue.cnpj || '').replace(/\D/g, '');
-      const patrimonioValue = this.currencyFormatter.parseCurrency(formValue.patrimonio || '');
+      const patrimonioValue = this.formatter.parseCurrency(formValue.patrimonio || '');
 
       const transaction: Partial<Transaction> = {
         codigo: formValue.codigo || '',
@@ -138,7 +130,7 @@ export class NewTransactionDialogComponent {
         cnpj: cnpjOnlyNumbers,
         codigoTipo: formValue.codigoTipo || '',
         rawPatrimonio: patrimonioValue,
-        patrimonio: this.currencyFormatter.formatCurrency(patrimonioValue)
+        patrimonio: this.formatter.formatCurrency(patrimonioValue)
       };
 
       this.transactionCreated.emit(transaction);
@@ -159,14 +151,14 @@ export class NewTransactionDialogComponent {
   }
 
   private updatePatrimonioField(value: string | number): void {
-    const formatted = formatPatrimonyValue(value);
+    const formatted = this.formatter.formatPatrimony(value);
 
     if (!formatted) {
       this.form.get('patrimonio')?.setValue('', { emitEvent: false });
       return;
     }
 
-    if (hasPatrimonyValueChanged(formatted, value)) {
+    if (formatted !== value) {
       this.form.get('patrimonio')?.setValue(formatted, { emitEvent: false });
     }
   }

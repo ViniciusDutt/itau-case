@@ -3,7 +3,7 @@ import localePtBr from '@angular/common/locales/pt';
 import { Injectable } from '@angular/core';
 import { TransactionDTO } from '../dtos/statement.dto';
 import { Transaction } from '../models/transaction.model';
-import { CurrencyFormatterService } from '../../../shared/services/currency-formatter.service';
+import { FormatterService } from '../../../shared/services/formatter.service';
 
 registerLocaleData(localePtBr);
 
@@ -11,7 +11,7 @@ registerLocaleData(localePtBr);
 export class StatementMapper {
   private readonly datePipe = new DatePipe('pt-BR');
 
-  constructor(private currencyFormatter: CurrencyFormatterService) {}
+  constructor(private formatter: FormatterService) {}
 
   toDomain(dto: TransactionDTO): Transaction {
     try {
@@ -20,12 +20,12 @@ export class StatementMapper {
       return {
         codigo: dto.codigo,
         nome: dto.nome,
-        cnpj: dto.cnpj ? this.currencyFormatter.formatCnpj(dto.cnpj) : '',
+        cnpj: dto.cnpj ? this.formatter.formatCnpj(dto.cnpj) : '',
         tema: dto.type?.nome || 'N/A',
         data: date,
         codigoTipo: dto.codigoTipo,
         rawPatrimonio: dto.patrimonio,
-        patrimonio: this.currencyFormatter.formatCurrency(dto.patrimonio)
+        patrimonio: this.formatter.formatCurrency(dto.patrimonio)
       };
     } catch (error) {
       console.error('Erro ao mapear transação:', error, dto);
