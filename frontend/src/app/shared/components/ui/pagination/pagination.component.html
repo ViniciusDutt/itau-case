@@ -1,54 +1,55 @@
-<div class="flex items-center justify-center gap-2 py-6">
-  <app-button
-    type="button"
-    variant="outline"
-    [disabled]="currentPage() <= 1"
-    (click)="goToFirst()"
-    title="Primeira página"
-  >
-    <app-icon name="double-arrow-left" class="w-6 h-6" />
-  </app-button>
-
-  <app-button
-    type="button"
-    variant="outline"
-    [disabled]="currentPage() <= 1"
-    (click)="goToPrevious()"
-    title="Página anterior"
-  >
-    <app-icon name="arrow-left" class="w-6 h-6" />
-  </app-button>
-
-  @for (page of pageNumbers(); track page) {
+<div class="flex flex-col lg:flex-row items-center gap-2 py-6">
+  <div class="flex items-center gap-2">
     <app-button
       type="button"
-      [variant]="page === currentPage() ? 'default' : 'ghost'"
-      (click)="goToPage(page)"
+      variant="outline"
+      [disabled]="currentPage() <= 1"
+      (click)="goToFirst()"
+      title="Primeira página"
     >
-      {{ page }}
+      <app-icon name="double-arrow-left" class="w-6 h-6" />
     </app-button>
-  }
 
-  <app-button
-    type="button"
-    variant="outline"
-    [disabled]="currentPage() >= totalPages()"
-    (click)="goToNext()"
-    title="Próxima página"
-  >
-    <app-icon name="arrow-right" class="w-6 h-6" />
-  </app-button>
+    <app-button
+      type="button"
+      variant="outline"
+      [disabled]="currentPage() <= 1"
+      (click)="goToPrevious()"
+      title="Página anterior"
+    >
+      <app-icon name="arrow-left" class="w-6 h-6" />
+    </app-button>
 
-  <app-button
-    type="button"
-    variant="outline"
-    [disabled]="currentPage() >= totalPages()"
-    (click)="goToLast()"
-    title="Última página"
-  >
-    <app-icon name="double-arrow-right" class="w-6 h-6" />
-  </app-button>
+    @for (page of pageNumbers(); track page) {
+      <app-button
+        type="button"
+        [variant]="page === currentPage() ? 'default' : 'ghost'"
+        (click)="goToPage(page)"
+      >
+        {{ page }}
+      </app-button>
+    }
 
+    <app-button
+      type="button"
+      variant="outline"
+      [disabled]="currentPage() >= totalPages()"
+      (click)="goToNext()"
+      title="Próxima página"
+    >
+      <app-icon name="arrow-right" class="w-6 h-6" />
+    </app-button>
+
+    <app-button
+      type="button"
+      variant="outline"
+      [disabled]="currentPage() >= totalPages()"
+      (click)="goToLast()"
+      title="Última página"
+    >
+      <app-icon name="double-arrow-right" class="w-6 h-6" />
+    </app-button>
+  </div>
   <span class="text-sm text-gray-600 ml-4">
     Página {{ currentPage() }} de {{ totalPages() }}
     @if (totalItems() > 0) {

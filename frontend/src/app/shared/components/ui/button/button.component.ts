@@ -13,4 +13,5 @@ export class ButtonComponent {
   variant = input<ButtonVariant>('default');
   disabled = input<boolean>(false);
   type = input<ButtonType>('button');
+  class = input<string>('');
 }

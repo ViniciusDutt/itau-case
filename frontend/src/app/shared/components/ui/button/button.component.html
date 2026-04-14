@@ -1,6 +1,7 @@
 <button
   [type]="type()"
   [disabled]="disabled()"
+  [class]="class()"
   [ngClass]="{
     'px-4 py-2 text-nowrap rounded font-bold cursor-pointer transition flex items-center justify-center gap-2': true,
     'bg-primary text-white hover:bg-primary/80': variant() === 'default',
