@@ -85,7 +85,7 @@ export class StatementComponent implements OnInit, AfterViewInit {
       },
       { label: 'Data', key: 'data', sortable: true },
       { label: 'Tema', key: 'tema', sortable: true },
-      { label: 'Categoria', key: 'nome', sortable: true },
+      { label: 'Empresa', key: 'nome', sortable: true },
       {
         label: 'Patrimônio Liquido',
         key: 'patrimonio',
